@@ -4,47 +4,53 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import datetime
+import schedule
+import time
 
+def send_email():
+    now = datetime.datetime.now()
+    content = ''
 
-now = datetime.datetime.now()
-content = ''
+    #Getting email content
+    def Top_Stories(url, class_name, curr_tag, title):
+        print("\n" + "*"*100)
+        cnt = ''
+        cnt += (title + "\n" + "*"*100 + "\n")
+        response = requests.get(url)
+        content = response.content
+        soup = BeautifulSoup(content,'html.parser')
+        for i,tag in enumerate(soup.find_all(curr_tag, attrs={"class":class_name})):
+            cnt+=((str(i+1)+ ". "+ tag.text + "\n") )
+            if(i > 3):
+                break
 
-#Getting email content
-def Top_CoinDesk_Stories(url):
-    print("\n" + "*"*100)
-    cnt = ''
-    cnt += ("Top CoinDesk Stories\n"+"*"*100 + "\n")
-    response = requests.get(url)
-    content = response.content
-    soup = BeautifulSoup(content,'html.parser')
-    for i,tag in enumerate(soup.find_all('div', attrs={"class":"card-title"})):
-        cnt+=((str(i+1)+ ". "+ tag.text + "\n") )
-        if(i >23):
-            break
-
-    cnt+=("*"*100+"\n")
-    print(cnt)
-    return(cnt)
+        cnt+=("*"*100+"\n")
+        print(cnt)
+        return(cnt)
     
-content = Top_CoinDesk_Stories('https://www.coindesk.com/')
+    content = Top_Stories('https://www.coindesk.com/', "card-title","div","Top CoinDesk Stories")
+    content += Top_Stories("https://www.nytimes.com/section/business/dealbook","css-1kv6qi e15t083i0","h3","Top NYT Business Stories")
+    content += Top_Stories("https://www.ft.com/cryptofinance","js-teaser-heading-link","a","Top Financial Times Stories")
 
+    #Sending Email
+    my_email = "christianrm0821@gmail.com"
+    mail = MIMEMultipart()
+    mail["subject"] = "Top Crypto Stories " + str(now.day) + "-" +str(now.year)
+    mail["From"] = my_email
+    mail["To"]=my_email
 
+    mail.attach(MIMEText(content,"plain"))
 
-#Sending Email
-my_email = "christianrm0821@gmail.com"
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.set_debuglevel(1)
+    server.ehlo()
+    server.starttls()
+    server.login(my_email,"ajxi sjfk sgln cgrr")
+    server.sendmail(my_email,my_email,mail.as_string())
+    print("List sent")
+    server.quit()
 
-mail = MIMEMultipart()
-mail["subject"] = "Top Crypto Stories " + str(now.day) + "-" +str(now.year)
-mail["From"] = my_email
-mail["To"]=my_email
-
-mail.attach(MIMEText(content,"plain"))
-
-server = smtplib.SMTP("smtp.gmail.com", 587)
-server.set_debuglevel(1)
-server.ehlo()
-server.starttls()
-server.login(my_email,"[email-password]")
-server.sendmail(my_email,my_email,mail.as_string())
-print("List sent")
-server.quit()
+schedule.every().day.at("08:00").do(send_email)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
