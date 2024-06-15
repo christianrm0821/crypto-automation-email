@@ -6,7 +6,6 @@ The Top Stories Emailer is a Python script that automatically scrapes the top he
 
 - Scrapes the top headlines from CoinDesk, The New York Times (Business), and the Financial Times (Crypto & Finance).
 - Sends the aggregated headlines via email to the specified recipient (your email address).
-- Scheduled to run automatically at 8:00 AM daily using the `schedule` library.
 - Utilizes BeautifulSoup for web scraping and smtplib for email sending.
 
 ## Getting Started
@@ -16,7 +15,6 @@ The Top Stories Emailer is a Python script that automatically scrapes the top he
 - Python 3.x
 - Requests library (`pip install requests`)
 - BeautifulSoup library (`pip install beautifulsoup4`)
-- `schedule` library (`pip install schedule`)
 
 ### Installation
 
