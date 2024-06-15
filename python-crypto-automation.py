@@ -4,7 +4,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import datetime
-import schedule
 import time
 
 def send_email():
@@ -29,7 +28,7 @@ def send_email():
         return(cnt)
     
     content = Top_Stories('https://www.coindesk.com/', "card-title","div","Top CoinDesk Stories")
-    content += Top_Stories("https://www.nytimes.com/section/business/dealbook","css-1kv6qi e15t083i0","h3","Top NYT Business Stories")
+    content += Top_Stories("https://www.nytimes.com/section/business/dealbook","css-1j88qqx e15t083i0","h3","Top NYT Business Stories")
     content += Top_Stories("https://www.ft.com/cryptofinance","js-teaser-heading-link","a","Top Financial Times Stories")
 
     #Sending Email
@@ -45,12 +44,9 @@ def send_email():
     server.set_debuglevel(1)
     server.ehlo()
     server.starttls()
-    server.login(my_email,"ajxi sjfk sgln cgrr")
+    server.login(my_email,"[my_password]")
     server.sendmail(my_email,my_email,mail.as_string())
     print("List sent")
     server.quit()
 
-schedule.every().day.at("08:00").do(send_email)
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+send_email()
